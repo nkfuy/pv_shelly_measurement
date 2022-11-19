@@ -5,7 +5,7 @@ let CONFIG = {
     'NUMBER_ARRAY_VAL': 2,   // Letzter Index vom Array (0, 1, 2)
     'POWER_THRESHOLD': 9,      // in Watt
     'SWITCH_STAT': false,    // Zutand des Schalters beim Initialisieren des Skripts
-    'TARGET_URL': "http://192.168.178.59/rpc/"
+    'TARGET_URL': "http://192.xxx.xxx.xx/rpc/"
   };
 
   let currentPowerMeasurement = 0.0;  // Speichervariable für die aktuelle Leistung in Watt
