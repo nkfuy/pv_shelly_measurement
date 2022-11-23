@@ -13,7 +13,7 @@ let CONFIG = {
 
   Timer.set(CONFIG.CONTROL_TIMER, true, function(ud){
 
-    let avgPower = 0;  // Spechervariable für die durchschnittliche Leistung der letzten Messungen
+    let sumOfAllPowers = 0;  // Spechervariable für die durchschnittliche Leistung der letzten Messungen
     // Funktion zur Messung der aktuellen Leistung in Watt
     Shelly.call(
       "switch.GetStatus", {id: CONFIG.INPUT_ID}, function(result, error_code, error_message, ud)
@@ -27,11 +27,12 @@ let CONFIG = {
     if (itter === CONFIG.NUMBER_ARRAY_VAL + 1){itter = 0}   // Prüft ob der Indexgrößer ist als das Array
 
     for (let i = 0; i <= CONFIG.NUMBER_ARRAY_VAL; i++) {   // Summiert Array Werte für Durchschnittsprüfung
-      avgPower += CONFIG.POWER_RECORDS[i];
+      sumOfAllPowers += CONFIG.POWER_RECORDS[i];
     }
 
+    let avgPower = sumOfAllPowers/CONFIG.NUMBER_ARRAY_VAL + 1;
     // Logik zur Auswertung ab wann der Schalter gesetzt wird
-    if ((avgPower / (CONFIG.NUMBER_ARRAY_VAL + 1)) > CONFIG.POWER_THRESHOLD && CONFIG.SWITCH_STAT === false){   //
+    if (avgPower > CONFIG.POWER_THRESHOLD && CONFIG.SWITCH_STAT === false){   //
       CONFIG.SWITCH_STAT = true      // Verbraucher wurde eingeschaltet
       Shelly.call("Switch.Set", { id: CONFIG.INPUT_ID, on:false },null,null); // dummy bis PV Leistung zur Verfügung steht
       // print("an", avgPower, CONFIG.POWER_RECORDS[2])
@@ -50,7 +51,7 @@ let CONFIG = {
       },
       null);
     }
-    else if ((avgPower / (CONFIG.NUMBER_ARRAY_VAL + 1)) < CONFIG.POWER_THRESHOLD && CONFIG.SWITCH_STAT === true){
+    else if ((avgPower < CONFIG.POWER_THRESHOLD && CONFIG.SWITCH_STAT === true){
       CONFIG.SWITCH_STAT = false
 
       Shelly.call("Switch.Set", { id: CONFIG.INPUT_ID, on:true},null,null);       // Schalten des Verbrauchers
